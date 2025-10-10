@@ -7,13 +7,19 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.sql.SQLException;
+
+import fr.dawan.CenterManager.dao.Database;
 
 public class CenterManagerApplication extends Application{
 
     private static Scene scene;
+    private static Database db;
 
     @Override
-    public void start(Stage stage) throws IOException {
+    public void start(Stage stage) throws IOException, SQLException {
+        
+        Database.initDatabase();
         scene = new Scene(loadFXML("/view/main"), 800, 600);
         stage.setScene(scene);
         stage.show();

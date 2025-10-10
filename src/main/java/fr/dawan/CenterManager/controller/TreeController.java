@@ -1,7 +1,18 @@
 package fr.dawan.CenterManager.controller;
 
+import java.sql.SQLException;
 import java.util.List;
 
+import fr.dawan.CenterManager.dao.FogDao;
+import fr.dawan.CenterManager.dao.GenericDao;
+import fr.dawan.CenterManager.dao.TrainerDao;
+import fr.dawan.CenterManager.dao.TrainingDao;
+import fr.dawan.CenterManager.model.Displayable;
+import fr.dawan.CenterManager.model.Fog;
+import fr.dawan.CenterManager.model.Trainer;
+import fr.dawan.CenterManager.model.Training;
+import fr.dawan.CenterManager.model.TreeItemData;
+import fr.dawan.CenterManager.util.DaoRegistry;
 import javafx.fxml.FXML;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
@@ -10,93 +21,93 @@ import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 
 public class TreeController {
-    private String[] formateursData = {"bob", "sam", "eric"};
-    private String[] formationsData = {"SQLLite", "Java", "C"};
-    private String[] fogData = {"Unix", "Windows", "Linux"};
+    private final FogDao fogDao = new FogDao();
+    private final TrainerDao trainerDao = new TrainerDao();
+    private final TrainingDao trainingDao = new TrainingDao();
 
     @FXML
-    private TreeView<String> menuTree;
-
-    private TreeItem<String> createCategory(String name, String[] data) {
-        TreeItem<String> category = new TreeItem<>(name);
-        System.out.println("Ajout Tree Children");
-        for (String s : data) {
-            category.getChildren().add(new TreeItem<>(s));
-        }
-        // dernier enfant "Ajouter..."
-        TreeItem<String> addItem = new TreeItem<>("Ajouter…");
-        category.getChildren().add(addItem);
-
-        // Optionnel : ajouter un listener sur le clic de "Ajouter…"
-        addItem.addEventHandler(TreeItem.branchExpandedEvent(), e -> {
-            System.out.println("Ajouter un nouvel élément dans " + name);
-            e.consume(); // éviter que ça se comporte comme un vrai élément
-        });
-        return category;
-    }
-
+    private TreeView<TreeItemData<?>> menuTree;
 
     @FXML
-    public void initialize() {
-        TreeItem<String> root = new TreeItem<>(); // invisible root
+    public void initialize() throws SQLException {
+        TreeContextMenuHandler handler = new TreeContextMenuHandler(menuTree);
+        // final DaoRegistry daoRegistry = new DaoRegistry();
+
+        handler.init();
+
+        DaoRegistry.registerDao(Fog.class, fogDao);
+        DaoRegistry.registerDao(Trainer.class, trainerDao);
+        DaoRegistry.registerDao(Training.class, trainingDao);
+
+        TreeItem<TreeItemData<?>> root = new TreeItem<>(new TreeItemData<>("root", true));
         menuTree.setRoot(root);
 
-        // Catégorie Formateurs
-        TreeItem<String> formateurs = createCategory("Formateurs", formateursData);
+        root.getChildren().addAll(List.of(
+            createCategory("Formateurs", trainerDao),
+            createCategory("Formations", trainingDao),
+            createCategory("Fogs", fogDao)
+        ));
 
-        // Catégorie Formations
-        TreeItem<String> formations = createCategory("Formations", formationsData);
-
-        // Catégorie Fogs
-        TreeItem<String> fogs = createCategory("Fogs", fogData);
-
-        // Ajouter au root
-        root.getChildren().addAll(List.of(formateurs, formations, fogs));
-
-        checkItemClicked();
+        handler.checkItemClicked();
     }
 
-    private void checkItemClicked() {
-        menuTree.setCellFactory(tv -> {
-            TreeCell<String> cell = new TreeCell<>() {
-                @Override
-                protected void updateItem(String item, boolean empty) {
-                    super.updateItem(item, empty);
-                    setText(empty ? null : item);
-                }
-            };
+    private <T extends Displayable> TreeItem<TreeItemData<?>> createCategory(String name, GenericDao<T> dao) throws SQLException {
+        TreeItem<TreeItemData<?>> categoryItem = new TreeItem<>(new TreeItemData<>(name, dao));
 
-            cell.setOnContextMenuRequested(event -> {
-                if (!cell.isEmpty()) {
-                    ContextMenu menu = new ContextMenu();
+        List<T> items = dao.getAll();
+        for (T data : items) {
+            categoryItem.getChildren().add(new TreeItem<>(new TreeItemData<>(data.getDisplayName(), data)));
+        }
 
-                    TreeItem<String> item = cell.getTreeItem();
-
-                    // Si c'est un parent (a des enfants)
-                    if (!item.getChildren().isEmpty()) {
-                        MenuItem add = new MenuItem("Ajouter");
-                        add.setOnAction(e -> {
-                            TreeItem<String> newItem = new TreeItem<>("Nouvel élément");
-                            item.getChildren().add(newItem);
-                        });
-                        menu.getItems().add(add);
-                    } else {
-                        // Sinon, c'est un enfant
-                        MenuItem modify = new MenuItem("Modifier");
-                        MenuItem delete = new MenuItem("Supprimer");
-
-                        modify.setOnAction(e -> item.setValue(item.getValue() + " Modifié"));
-                        delete.setOnAction(e -> item.getParent().getChildren().remove(item));
-
-                        menu.getItems().addAll(modify, delete);
-                    }
-
-                    menu.show(cell, event.getScreenX(), event.getScreenY());
-                }
-            });
-
-            return cell;
-        });
-
+        return categoryItem;
     }
+
+
+    // private void checkItemClicked() {
+    //     menuTree.setCellFactory(tv -> {
+    //         TreeCell<TreeItemData<?>> cell = new TreeCell<>() {
+    //             @Override
+    //             protected void updateItem(TreeItemData<?> item, boolean empty) {
+    //                 super.updateItem(item, empty);
+    //                 setText(empty ? null : item.getLabel());
+    //             }
+    //         };
+
+    //         cell.setOnContextMenuRequested(event -> {
+    //             if (!cell.isEmpty()) {
+    //                 ContextMenu menu = new ContextMenu();
+
+    //                 TreeItem<TreeItemData<?>> item = cell.getTreeItem();
+    //                 TreeItemData<?> data = item.getValue();
+    //                 // Si c'est un parent (a des enfants)
+    //                 if (data.isCategory()) {
+    //                     MenuItem add = new MenuItem("Ajouter");
+    //                     add.setOnAction(e -> {
+    //                         TreeItem<TreeItemData<?>> newItem = new TreeItem<>(new TreeItemData<>("Nouvel élément", false, null));
+    //                         item.getChildren().add(newItem);
+    //                     });
+    //                     menu.getItems().add(add);
+    //                 } else {
+    //                     // Sinon, c'est un enfant
+    //                     MenuItem modify = new MenuItem("Modifier");
+    //                     MenuItem delete = new MenuItem("Supprimer");
+
+    //                     modify.setOnAction(e -> {
+    //                         data.setLabel(data.getLabel() + " Modifié");
+    //                         item.setValue(data);
+    //                     });
+
+    //                     delete.setOnAction(e -> item.getParent().getChildren().remove(item));
+
+    //                     menu.getItems().addAll(modify, delete);
+    //                 }
+
+    //                 menu.show(cell, event.getScreenX(), event.getScreenY());
+    //             }
+    //         });
+
+    //         return cell;
+    //     });
+
+    // }
 }

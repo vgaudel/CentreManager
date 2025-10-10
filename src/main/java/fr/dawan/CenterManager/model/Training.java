@@ -1,9 +1,19 @@
 package fr.dawan.CenterManager.model;
 
-public class Training {
+public class Training implements Displayable {
     private int id;
     private String name;
     private String description;
+
+    public Training(String name) {
+        this.name = name;
+    }
+
+    public Training(int id, String name, String description) {
+        this.id = id;
+        this.name = name;
+        this.description = description;
+    }
 
     public void setId(int id) {
         this.id = id;
@@ -13,7 +23,7 @@ public class Training {
         this.name = name;
     }
 
-    public void setdescription(String description) {
+    public void setDescription(String description) {
         this.description = description;
     }
 
@@ -25,7 +35,12 @@ public class Training {
         return name;
     }
 
-    public String getdescription() {
+    public String getDescription() {
         return description;
+    }
+
+    @Override
+    public String getDisplayName() {
+        return getName();
     }
 }

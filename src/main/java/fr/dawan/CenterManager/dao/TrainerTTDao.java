@@ -4,10 +4,25 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
 public class TrainerTTDao {
+
+    public void addRemoteDayColumnIfNotExists() throws SQLException {
+        String sql = "ALTER TABLE trainer ADD COLUMN remoteDay TEXT";
+        try (Connection conn = Database.getConnection();
+            Statement stmt = conn.createStatement()) {
+            stmt.execute(sql);
+        } catch (SQLException e) {
+            // Ignore l'erreur si la colonne existe déjà
+            if (!e.getMessage().contains("duplicate column name")) {
+                throw e;
+            }
+        }
+    }
+
 
     public void addDay(int trainerId, String day) throws SQLException {
         String sql = "INSERT INTO trainerTT(trainer_id, day) VALUES(?, ?)";
