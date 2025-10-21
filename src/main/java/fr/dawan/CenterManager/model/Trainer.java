@@ -41,4 +41,9 @@ public class Trainer implements Displayable {
     public String getDisplayName() {
         return getFirstName();
     }
+
+    @Override
+    public void setDisplayName(String name) {
+        this.firstName = name;
+    }
 }

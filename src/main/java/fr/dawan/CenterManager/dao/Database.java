@@ -26,12 +26,16 @@ public class Database {
             // créer la connexion si nécessaire
             if (conn == null || conn.isClosed()) {
                 conn = DriverManager.getConnection(URL); // SQLite créera center.db si absent
+                conn.setAutoCommit(true);
             }
             return conn;
 
         } catch (Exception e) {
             throw new SQLException("Erreur lors de la connexion à la base : " + e.getMessage(), e);
         }
+    }
+
+    private Database() {
     }
 
     /**

@@ -1,5 +1,7 @@
 package fr.dawan.CenterManager.model;
 
+import java.util.function.BiConsumer;
+
 import fr.dawan.CenterManager.dao.GenericDao;
 
 public class TreeItemData<T extends Displayable> {
@@ -7,7 +9,8 @@ public class TreeItemData<T extends Displayable> {
     private final boolean isRoot;
     private final T data;
     private String label;
-    private final GenericDao<T> dao;
+    private GenericDao<T> dao;
+    private BiConsumer<T, String> labelSetter;
 
 
     // A UTILISER UNIQUEMENT POUR ROOT
@@ -59,6 +62,20 @@ public class TreeItemData<T extends Displayable> {
 
     public boolean isRoot() {
         return isRoot;
+    }
+
+    public void setLabelSetter(BiConsumer<T, String> labelSetter) {
+        this.labelSetter = labelSetter;
+    }
+
+    public BiConsumer<T, String> getLabelSetter() {
+        return labelSetter;
+    }
+
+    public void setDaoFromParent(GenericDao<?> parentDao) {
+        if (this.dao == null && !isCategory && !isRoot) {
+            this.dao = (GenericDao<T>) parentDao;
+        }
     }
 
     @Override

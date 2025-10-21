@@ -1,10 +1,10 @@
 package fr.dawan.CenterManager.dao;
 
+import java.io.File;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-import fr.dawan.CenterManager.model.Displayable;
 import fr.dawan.CenterManager.model.Fog;
 
 public class FogDao implements GenericDao<Fog> {
@@ -22,16 +22,6 @@ public class FogDao implements GenericDao<Fog> {
             stmt.execute(sql);
         }
     }
-
-    // public void insert(Fog f) throws SQLException {
-    //     String sql = "INSERT INTO fog(name, description) VALUES(?, ?)";
-    //     try (Connection conn = Database.getConnection();
-    //          PreparedStatement pstmt = conn.prepareStatement(sql)) {
-    //         pstmt.setString(1, f.getName());
-    //         pstmt.setString(2, f.getDescription());
-    //         pstmt.executeUpdate();
-    //     }
-    // }
 
     @Override
     public List<Fog> getAll() throws SQLException {
@@ -75,11 +65,30 @@ public class FogDao implements GenericDao<Fog> {
         String sql = "UPDATE fog SET name = ?, description = ? WHERE id = ?";
 
         try (Connection conn = Database.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-                pstmt.setString(1, entity.getName());
-                pstmt.setString(2, entity.getDescription());
-                pstmt.setInt(3, entity.getId());
-                pstmt.executeUpdate();
+        PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, entity.getName());
+            pstmt.setString(2, entity.getDescription());
+            pstmt.setInt(3, entity.getId());
+            int updated = pstmt.executeUpdate();
+            if (updated == 0) {
+                System.err.println("⚠️ Update failed: No row with id = " + entity.getId() + " was found.");
+                System.err.println("Entity data: name=" + entity.getName() + ", description=" + entity.getDescription());
+            } else {
+                System.out.println("✅ Update successful, rows affected: " + updated);
+            }
+
+        } catch (SQLException e) {
+            System.err.println("❌ SQL Error during update:");
+            e.printStackTrace();
+        }
+
+        try (Connection conn = Database.getConnection();
+            PreparedStatement select = conn.prepareStatement("SELECT name, description FROM fog WHERE id = ?")) {
+            select.setInt(1, entity.getId());
+            ResultSet rs = select.executeQuery();
+            if(rs.next()) {
+                System.out.println("After update: " + rs.getString("name") + ", " + rs.getString("description"));
+            }
         }
     }
 

@@ -48,4 +48,9 @@ public class Fog implements Displayable {
     public String getDisplayName() {
         return getName();
     }
+
+    @Override
+    public void setDisplayName(String name) {
+        this.name = name;
+    }
 }

@@ -1,6 +1,5 @@
 package fr.dawan.CenterManager.dao;
 
-import fr.dawan.CenterManager.model.Fog;
 import fr.dawan.CenterManager.model.Trainer;
 import java.sql.*;
 import java.util.ArrayList;
@@ -21,16 +20,6 @@ public class TrainerDao implements GenericDao<Trainer>{
             stmt.execute(sql);
         }
     }
-
-    // public void insert(Trainer t) throws SQLException {
-    //     String sql = "INSERT INTO trainer(firstname, lastname) VALUES(?, ?)";
-    //     try (Connection conn = Database.getConnection();
-    //          PreparedStatement pstmt = conn.prepareStatement(sql)) {
-    //         pstmt.setString(1, t.getFirstname());
-    //         pstmt.setString(2, t.getLastname());
-    //         pstmt.executeUpdate();
-    //     }
-    // }
 
     @Override
     public List<Trainer> getAll() throws SQLException {
