@@ -28,7 +28,7 @@
 <?import javafx.scene.text.Font?>
 
 <VBox xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
-      prefWidth="900.0" prefHeight="600.0" fx:controller="fr.dawan.CenterManager.controller.TreeController">
+      prefWidth="900.0" prefHeight="600.0" fx:controller="fr.dawan.CenterManager.controller.MainController">
 
     <!-- MenuBar en haut -->
     <children>
@@ -38,6 +38,7 @@
                     <items>
                         <MenuItem text="New"/>
                         <MenuItem text="Open…"/>
+                        <MenuItem text="Export..."/>
                         <SeparatorMenuItem/>
                         <MenuItem text="Save"/>
                         <MenuItem text="Quit"/>
@@ -61,33 +62,16 @@
         <SplitPane dividerPositions="0.25" VBox.vgrow="ALWAYS">
             <items>
                 <!-- Colonne gauche : ListView des éléments -->
-                <AnchorPane prefWidth="200.0">
-                    <children>
-                        <VBox layoutX="5" layoutY="5" spacing="10.0">
-                            <Label text="Éléments disponibles:"/>
-                            <!-- <ListView fx:id="elementsList" prefWidth="180.0" prefHeight="500.0"/> -->
-                            <TreeView fx:id="menuTree" prefWidth="200.0" showRoot="false"/>
-                        </VBox>
-                    </children>
-                </AnchorPane>
+                <AnchorPane fx:id="treePane" />
 
                 <!-- Colonne droite : plan scrollable -->
-                <ScrollPane prefWidth="700.0">
+                <ScrollPane>
                     <content>
-                        <AnchorPane fx:id="planContent" prefWidth="700.0" prefHeight="550.0">
-                            <children>
-                              <!-- On met le plan dans un StackPane pour gérer le centrage -->
-                              <StackPane prefWidth="430.0" prefHeight="545.0">
-                                  <!-- Ici ton plan (ImageView, SVG, etc.) -->
-                                  <ImageView fx:id="planImage" fitWidth="400" fitHeight="400" preserveRatio="true" />
-
-                                  <!-- Bouton centré -->
-                                  <Button text="Ajouter étiquette" />
-                              </StackPane>
-                            </children>
-                        </AnchorPane>
+                        <AnchorPane fx:id="planContent" />
                     </content>
                 </ScrollPane>
+
+                <AnchorPane fx:id="detailPane" />
             </items>
         </SplitPane>
 
@@ -96,11 +80,7 @@
             <padding>
                 <Insets top="3" right="3" bottom="3" left="3"/>
             </padding>
-            <children>
-                <Label text="Left status" HBox.hgrow="ALWAYS"/>
-                <Pane HBox.hgrow="ALWAYS"/> <!-- juste pour espacer -->
-                <Label text="Right status"/>
-            </children>
+            <AnchorPane fx:id="statusPane" />
         </HBox>
     </children>
 </VBox>

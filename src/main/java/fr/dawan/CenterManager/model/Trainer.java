@@ -1,11 +1,15 @@
 package fr.dawan.CenterManager.model;
 
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+
+import fr.dawan.CenterManager.util.DisplayFields;
 
 public class Trainer implements Displayable {
     private int id;
-    private String firstName;
-    private String lastName;
+    private String firstName; // Prenom
+    private String lastName;  // Nom
     private List<RemoteDay> remoteDays; // 1 ou 2 jours de TT
 
     public Trainer(String name) {
@@ -39,11 +43,50 @@ public class Trainer implements Displayable {
 
     @Override
     public String getDisplayName() {
-        return getFirstName();
+        return getFirstName() + " " + getLastName();
     }
 
     @Override
-    public void setDisplayName(String name) {
-        this.firstName = name;
+    public void setDisplayName(Map<String, String> fields) {
+        setFirstName(fields.get(DisplayFields.FIRST_NAME));
+        setLastName(fields.get(DisplayFields.LAST_NAME));
+    }
+
+    @Override
+    public Map<String, String> getDisplayFields() {
+        Map<String, String> fields = new LinkedHashMap<>();
+
+        fields.put(DisplayFields.LAST_NAME, getLastName());
+        fields.put(DisplayFields.FIRST_NAME, getFirstName());
+        fields.put(DisplayFields.REMOTE_DAYS, getRemoteDays().toString());
+        return (fields);
+    }
+
+    @Override
+    public Map<String, Object> getEditableFields() {
+        Map<String, Object> fields = new LinkedHashMap<>();
+
+        fields.put(DisplayFields.FIRST_NAME, getFirstName());
+        fields.put(DisplayFields.LAST_NAME, getLastName());
+        fields.put(DisplayFields.REMOTE_DAYS, getRemoteDays());
+        return fields;
+    }
+
+    @Override
+    public void updateFromFields(Map<String, Object> fields) {
+        if (fields.containsKey(DisplayFields.FIRST_NAME))
+            setFirstName(fields.get(DisplayFields.FIRST_NAME).toString());
+        if (fields.containsKey(DisplayFields.LAST_NAME))
+            setLastName(fields.get(DisplayFields.LAST_NAME).toString());
+        if (fields.containsKey(DisplayFields.REMOTE_DAYS)) {
+            Object value = fields.get(DisplayFields.REMOTE_DAYS);
+            if (value instanceof List<?> list) {
+                List<RemoteDay> remoteDaysTemp = list.stream()
+                                                 .filter(RemoteDay.class::isInstance)
+                                                 .map(RemoteDay.class::cast)
+                                                 .toList();
+                setRemoteDays(remoteDaysTemp);
+            }
+        }
     }
 }

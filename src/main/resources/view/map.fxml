@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.Scene?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.image.ImageView?>
+
+<AnchorPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="fr.dawan.CenterManager.controller.MapViewController"
+            prefWidth="700.0" prefHeight="550.0">
+    <children>
+        <!-- On met le plan dans un StackPane pour gérer le centrage -->
+        <StackPane prefWidth="430.0" prefHeight="545.0">
+            <!-- Ici ton plan (ImageView, SVG, etc.) -->
+            <ImageView fx:id="planImage" preserveRatio="false" />
+
+            <!-- Bouton centré -->
+            <Button fx:id="addPlanButton" text="Ajouter étiquette" />
+        </StackPane>
+    </children>
+</AnchorPane>

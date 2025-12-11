@@ -1,5 +1,10 @@
 package fr.dawan.CenterManager.model;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
+
+import fr.dawan.CenterManager.util.DisplayFields;
+
 public class Fog implements Displayable {
     private int id;
     private String name;
@@ -50,7 +55,34 @@ public class Fog implements Displayable {
     }
 
     @Override
-    public void setDisplayName(String name) {
-        this.name = name;
+    public void setDisplayName(Map<String, String> fields) {
+        setName(fields.get("Name"));
     }
+
+    @Override
+    public Map<String, String> getDisplayFields() {
+        Map<String, String> fields = new LinkedHashMap<>();
+
+        fields.put(DisplayFields.DISPLAY_NAME, getName());
+        fields.put(DisplayFields.DESCIRPTION, getDescription());
+        return (fields);
+    }
+
+    @Override
+    public Map<String, Object> getEditableFields() {
+        Map<String, Object> fields = new LinkedHashMap<>();
+
+        fields.put(DisplayFields.TRAINING_TITLE, getName());
+        fields.put(DisplayFields.DESCIRPTION, getDescription());
+        return fields;
+    }
+
+    @Override
+    public void updateFromFields(Map<String, Object> fields) {
+        if (fields.containsKey(DisplayFields.TRAINING_TITLE))
+            setName(fields.get(DisplayFields.TRAINING_TITLE).toString());
+        if (fields.containsKey(DisplayFields.DESCIRPTION))
+            setDescription(fields.get(DisplayFields.DESCIRPTION).toString());
+    }
+
 }

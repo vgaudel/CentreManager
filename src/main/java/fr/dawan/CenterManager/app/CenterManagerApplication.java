@@ -14,13 +14,11 @@ import fr.dawan.CenterManager.dao.Database;
 public class CenterManagerApplication extends Application{
 
     private static Scene scene;
-    private static Database db;
 
     @Override
     public void start(Stage stage) throws IOException, SQLException {
-        
         Database.initDatabase();
-        scene = new Scene(loadFXML("/view/main"), 800, 600);
+        scene = new Scene(loadFXML("/view/main"), 1200, 600);
         stage.setScene(scene);
         stage.show();
     }

@@ -78,6 +78,10 @@ public class TreeItemData<T extends Displayable> {
         }
     }
 
+    public String getDisplayName() {
+        return data.getDisplayName();
+    }
+
     @Override
     public String toString() {
         return label;

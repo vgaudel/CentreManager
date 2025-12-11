@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.control.Label?>
+
+<AnchorPane  xmlns="http://javafx.com/javafx"
+       xmlns:fx="http://javafx.com/fxml"
+       fx:controller="fr.dawan.CenterManager.controller.StatusBarController"
+       style="-fx-padding: 5 10;">
+       <HBox>
+
+              <!-- Message de statut à gauche -->
+              <Label fx:id="statusMessage"
+                     text="Prêt."
+                     style="-fx-text-fill: white;"/>
+
+              <!-- Remplissage pour pousser le statut BDD à droite -->
+              <Region HBox.hgrow="ALWAYS"/>
+
+              <!-- Statut de la BDD à droite -->
+              <Label fx:id="dbStatus"
+                     text="BDD : Déconnectée"
+                     style="-fx-text-fill: #ff4d4d;"/>
+       </HBox>
+</AnchorPane>

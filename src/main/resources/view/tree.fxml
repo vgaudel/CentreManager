@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.application.Application?> <!-- généralement pas nécessaire dans FXML -->
+<?import javafx.fxml.FXML?> <!-- annotations, pas besoin dans FXML -->
+<?import javafx.fxml.FXMLLoader?> <!-- pour charger le FXML, pas nécessaire dans FXML -->
+
+<?import javafx.scene.Scene?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.AnchorPane?>
+
+
+
+<AnchorPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="fr.dawan.CenterManager.controller.TreeController"
+            prefWidth="200.0">
+    <children>
+        <VBox layoutX="5" layoutY="5" spacing="10.0">
+            <Label text="Éléments disponibles:"/>
+            <!-- <ListView fx:id="elementsList" prefWidth="180.0" prefHeight="500.0"/> -->
+            <TreeView fx:id="menuTree" prefWidth="200.0" showRoot="false"/>
+        </VBox>
+    </children>
+</AnchorPane>

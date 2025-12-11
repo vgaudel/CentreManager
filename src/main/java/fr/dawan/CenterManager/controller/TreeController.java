@@ -2,6 +2,7 @@ package fr.dawan.CenterManager.controller;
 
 import java.sql.SQLException;
 import java.util.List;
+import java.util.function.Consumer;
 
 import fr.dawan.CenterManager.dao.FogDao;
 import fr.dawan.CenterManager.dao.GenericDao;
@@ -21,6 +22,7 @@ public class TreeController {
     private final FogDao fogDao = new FogDao();
     private final TrainerDao trainerDao = new TrainerDao();
     private final TrainingDao trainingDao = new TrainingDao();
+    private Consumer<TreeItemData<?>> onItemSelected;
 
     @FXML
     private TreeView<TreeItemData<?>> menuTree;
@@ -44,6 +46,12 @@ public class TreeController {
             createCategory("Fogs", fogDao)
         ));
 
+        menuTree.getSelectionModel().selectedItemProperty().addListener((obs, oldV, newV) -> {
+            if (onItemSelected != null) {
+                onItemSelected.accept(newV != null ? newV.getValue() : null);
+            }
+        });
+
         handler.checkItemClicked();
     }
 
@@ -58,5 +66,9 @@ public class TreeController {
         }
 
         return categoryItem;
+    }
+
+    public <T extends Displayable> void setOnItemSelected(Consumer<TreeItemData<?>> callback) {
+        this.onItemSelected = callback;
     }
 }
