@@ -12,6 +12,7 @@ import java.util.Optional;
 import fr.dawan.CenterManager.dao.GenericDao;
 import fr.dawan.CenterManager.model.Displayable;
 import fr.dawan.CenterManager.model.TreeItemData;
+import fr.dawan.CenterManager.util.EditableField;
 import javafx.geometry.Insets;
 import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
@@ -115,12 +116,12 @@ public class TreeContextMenuHandler<T extends Displayable> {
             MenuItem edit = new MenuItem("Modifier");
             edit.setOnAction(e -> {
                 TreeItemData<T> data = treeItem.getValue();
-                if (data.isCategory()) return;
+                if (data.isCategory()) return null;
 
                 T entity = data.getData();
 
                 // 1. On récupère les champs éditables de l'entité
-                Map<String, Object> editableFields = entity.getEditableFields();
+                Map<String, EditableField> editableFields = entity.getEditableFields();
 
                 // 2. Création d'une fenêtre dynamique
                 Dialog<Map<String, Object>> dialog = new Dialog<>();
@@ -140,40 +141,28 @@ public class TreeContextMenuHandler<T extends Displayable> {
 
                 int row = 0;
 
-                for (Map.Entry<String, Object> entry : editableFields.entrySet()) {
+                for (Map.Entry<String, EditableField> entry : editableFields.entrySet()) {
                     String fieldName = entry.getKey();
-                    Object fieldValue = entry.getValue();
+                    EditableField fieldValue = entry.getValue();
 
                     Label label = new Label(fieldName + " :");
 
                     Control editor;
 
                     // 3. On crée un champ adapté selon le type
-                    if (fieldValue instanceof String) {
-                        TextField tf = new TextField((String) fieldValue);
+                    if (fieldValue.getType() == "") {
+                        TextField tf = new TextField(fieldName);
                         editor = tf;
-
-                    } else if (fieldValue instanceof Integer) {
-                        TextField tf = new TextField(fieldValue.toString());
-                        tf.textProperty().addListener((obs, oldVal, newVal) -> {
-                            if (!newVal.matches("\\d*")) tf.setText(oldVal);
-                        });
-                        editor = tf;
-
-                    } else if (fieldValue instanceof LocalDate) {
-                        DatePicker dp = new DatePicker((LocalDate) fieldValue);
-                        editor = dp;
-
+                    } else if (fieldValue.getType()) {
+                        // Liste => TextArea (simple et générique)
+                        TextArea ta = new TextArea(String.join("\n", (List<String>) fieldValue));
+                        ta.setPrefRowCount(4);
+                        editor = ta;
                     } else if (fieldValue instanceof List) {
                         // Liste => TextArea (simple et générique)
                         TextArea ta = new TextArea(String.join("\n", (List<String>) fieldValue));
                         ta.setPrefRowCount(4);
                         editor = ta;
-
-                    } else {
-                        // fallback générique : tout en texte
-                        TextField tf = new TextField(fieldValue != null ? fieldValue.toString() : "");
-                        editor = tf;
                     }
 
                     grid.add(label, 0, row);

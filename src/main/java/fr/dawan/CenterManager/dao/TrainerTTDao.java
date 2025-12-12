@@ -38,7 +38,7 @@ public class TrainerTTDao {
         List<String> days = new ArrayList<>();
         String sql = "SELECT day FROM trainerTT WHERE trainer_id = ?";
         try (Connection conn = Database.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setInt(1, trainerId);
             ResultSet rs = pstmt.executeQuery();
             while (rs.next()) {

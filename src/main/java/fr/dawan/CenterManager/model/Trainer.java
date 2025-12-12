@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import fr.dawan.CenterManager.util.DisplayFields;
+import fr.dawan.CenterManager.util.FieldType;
 
 public class Trainer implements Displayable {
     private int id;
@@ -63,14 +64,17 @@ public class Trainer implements Displayable {
     }
 
     @Override
-    public Map<String, Object> getEditableFields() {
-        Map<String, Object> fields = new LinkedHashMap<>();
+    public Map getEditableFields() {
+        Map<String, EditableField> fields = new LinkedHashMap<>();
 
-        fields.put(DisplayFields.FIRST_NAME, getFirstName());
-        fields.put(DisplayFields.LAST_NAME, getLastName());
-        fields.put(DisplayFields.REMOTE_DAYS, getRemoteDays());
+        fields.put(DisplayFields.FIRST_NAME, new EditableField(FieldType.TEXT, getFirstName()));
+        fields.put(DisplayFields.LAST_NAME, new EditableField(FieldType.TEXT, getLastName()));
+        fields.put(DisplayFields.REMOTE_DAYS, new EditableField(FieldType.MULTI_CHOICE, getRemoteDays()));
+
         return fields;
     }
+
+
 
     @Override
     public void updateFromFields(Map<String, Object> fields) {

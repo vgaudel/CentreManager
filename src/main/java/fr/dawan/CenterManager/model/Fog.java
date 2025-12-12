@@ -4,6 +4,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import fr.dawan.CenterManager.util.DisplayFields;
+import fr.dawan.CenterManager.util.FieldType;
 
 public class Fog implements Displayable {
     private int id;
@@ -69,13 +70,15 @@ public class Fog implements Displayable {
     }
 
     @Override
-    public Map<String, Object> getEditableFields() {
-        Map<String, Object> fields = new LinkedHashMap<>();
+    public Map getEditableFields() {
+        Map<String, EditableField> fields = new LinkedHashMap<>();
 
-        fields.put(DisplayFields.TRAINING_TITLE, getName());
-        fields.put(DisplayFields.DESCIRPTION, getDescription());
+        fields.put(DisplayFields.TRAINING_TITLE, new EditableField(FieldType.TEXT, getName()));
+        fields.put(DisplayFields.DESCIRPTION, new EditableField(FieldType.TEXTEAREA, getDescription()));
+
         return fields;
     }
+
 
     @Override
     public void updateFromFields(Map<String, Object> fields) {

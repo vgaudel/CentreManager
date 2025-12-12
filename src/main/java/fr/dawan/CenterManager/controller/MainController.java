@@ -61,9 +61,11 @@ public class MainController {
             if (item == null) {
                 detailPaneController.hide();
                 return;
+            } else if (item.isCategory()) {
+                return;
             }
 
-            detailPaneController.showDetail(item);
+            detailPaneController.showDetailsFrom(item.getData());
         });
     }
 
