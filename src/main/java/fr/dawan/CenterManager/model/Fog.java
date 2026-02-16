@@ -2,14 +2,18 @@ package fr.dawan.CenterManager.model;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.function.Consumer;
 
 import fr.dawan.CenterManager.util.DisplayFields;
-import fr.dawan.CenterManager.util.FieldType;
 
 public class Fog implements Displayable {
     private int id;
     private String name;
     private String description;
+    private final Map<String, Consumer<Object>> fieldSetters = Map.of(
+        DisplayFields.TRAINING_TITLE, v -> setName(v.toString()),
+        DisplayFields.DESCIRPTION, v -> setDescription(v.toString())
+    );
 
     public Fog(String name) {
         this.name = name;
@@ -61,8 +65,8 @@ public class Fog implements Displayable {
     }
 
     @Override
-    public Map<String, String> getDisplayFields() {
-        Map<String, String> fields = new LinkedHashMap<>();
+    public Map<String, Object> getDisplayFields() {
+        Map<String, Object> fields = new LinkedHashMap<>();
 
         fields.put(DisplayFields.DISPLAY_NAME, getName());
         fields.put(DisplayFields.DESCIRPTION, getDescription());
@@ -73,19 +77,20 @@ public class Fog implements Displayable {
     public Map getEditableFields() {
         Map<String, EditableField> fields = new LinkedHashMap<>();
 
-        fields.put(DisplayFields.TRAINING_TITLE, new EditableField(FieldType.TEXT, getName()));
-        fields.put(DisplayFields.DESCIRPTION, new EditableField(FieldType.TEXTEAREA, getDescription()));
+        fields.put(DisplayFields.TRAINING_TITLE, EditableField.text(getName()));
+        fields.put(DisplayFields.DESCIRPTION, EditableField.textArea(getDescription()));
 
         return fields;
     }
 
-
     @Override
     public void updateFromFields(Map<String, Object> fields) {
-        if (fields.containsKey(DisplayFields.TRAINING_TITLE))
-            setName(fields.get(DisplayFields.TRAINING_TITLE).toString());
-        if (fields.containsKey(DisplayFields.DESCIRPTION))
-            setDescription(fields.get(DisplayFields.DESCIRPTION).toString());
+        fields.forEach((key, value) -> {
+            Consumer<Object> setter = fieldSetters.get(key);
+
+            if (setter != null)
+                setter.accept(value);
+        });
     }
 
 }

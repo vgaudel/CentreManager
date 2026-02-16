@@ -3,12 +3,8 @@ package fr.dawan.CenterManager.controller;
 import java.util.Map;
 
 import fr.dawan.CenterManager.model.Displayable;
-import fr.dawan.CenterManager.model.TreeItemData;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.control.TreeItem;
-import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 
 public class DetailPaneController {
@@ -27,14 +23,14 @@ public class DetailPaneController {
 
         titleLabel.setText(d.getDisplayName());
 
-        Map<String, String> fields = d.getDisplayFields();
+        Map<String, Object> fields = d.getDisplayFields();
 
         int row = 0;
         for (var entry : fields.entrySet()) {
             Label key = new Label(entry.getKey() + " :");
             key.setStyle("-fx-font-weight: bold;");
 
-            Label value = new Label(entry.getValue());
+            Label value = new Label(String.valueOf(entry.getValue()));
 
             GridPane.setRowIndex(key, row);
             GridPane.setColumnIndex(key, 0);

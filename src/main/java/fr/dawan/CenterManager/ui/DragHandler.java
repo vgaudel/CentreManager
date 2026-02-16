@@ -1,39 +1,40 @@
 package fr.dawan.CenterManager.ui;
 
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.Pane;
+import javafx.scene.shape.SVGPath;
 
 public class DragHandler {
-    private ImageView planImage;
+    private final Pane planPane;
 
     private double lastMouseX;
     private double lastMouseY;
 
-    public DragHandler(ImageView plImageView) {
-        this.planImage = plImageView;
+    public DragHandler(Pane planPane) {
+        this.planPane = planPane;
     }
 
     public void initialize() {
         isDrag();
-        System.out.println("Is Drag");
     }
 
     private void isDrag() {
         // gestion du drag
-        planImage.setOnMousePressed(event -> {
+        planPane.setOnMousePressed(event -> {
             if (event.isPrimaryButtonDown()) {
                 lastMouseX = event.getSceneX();
                 lastMouseY = event.getSceneY();
             }
         });
 
-        planImage.setOnMouseDragged(event -> {
+        planPane.setOnMouseDragged(event -> {
             if (event.isPrimaryButtonDown()) {
                 double deltaX = event.getSceneX() - lastMouseX;
                 double deltaY = event.getSceneY() - lastMouseY;
 
                 // déplace l’image
-                planImage.setTranslateX(planImage.getTranslateX() + deltaX);
-                planImage.setTranslateY(planImage.getTranslateY() + deltaY);
+                planPane.setTranslateX(planPane.getTranslateX() + deltaX);
+                planPane.setTranslateY(planPane.getTranslateY() + deltaY);
 
                 // met à jour les positions de référence
                 lastMouseX = event.getSceneX();
@@ -41,10 +42,23 @@ public class DragHandler {
             }
         });
 
-        planImage.setOnMouseReleased(event -> {
+        planPane.setOnMouseReleased(event -> {
             if (event.isPrimaryButtonDown()) {
-                // rien de spécial à faire, mais tu peux reset si tu veux
+                // A SUPPRIMER
             }
         });
     }
+
+    public void makeDraggable(SVGPath svg) {
+        svg.setOnMousePressed(e -> {
+            lastMouseX = e.getSceneX() - svg.getTranslateX();
+            lastMouseY = e.getSceneY() - svg.getTranslateY();
+        });
+
+        svg.setOnMouseDragged(e -> {
+            svg.setTranslateX(e.getSceneX() - lastMouseX);
+            svg.setTranslateY(e.getSceneY() - lastMouseY);
+        });
+    }
+
 }

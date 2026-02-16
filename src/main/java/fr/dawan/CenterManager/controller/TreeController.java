@@ -31,8 +31,6 @@ public class TreeController {
     public void initialize() throws SQLException {
         TreeContextMenuHandler handler = new TreeContextMenuHandler(menuTree);
 
-        handler.init();
-
         DaoRegistry.registerDao(Fog.class, fogDao);
         DaoRegistry.registerDao(Trainer.class, trainerDao);
         DaoRegistry.registerDao(Training.class, trainingDao);
@@ -41,10 +39,9 @@ public class TreeController {
         menuTree.setRoot(root);
 
         root.getChildren().addAll(List.of(
-            createCategory("Formateurs", trainerDao),
-            createCategory("Formations", trainingDao),
-            createCategory("Fogs", fogDao)
-        ));
+                createCategory("Formateurs", trainerDao),
+                createCategory("Formations", trainingDao),
+                createCategory("Fogs", fogDao)));
 
         menuTree.getSelectionModel().selectedItemProperty().addListener((obs, oldV, newV) -> {
             if (onItemSelected != null) {
@@ -52,15 +49,18 @@ public class TreeController {
             }
         });
 
+        // Cette méthode configure à la fois le menu contextuel ET le drag & drop
         handler.checkItemClicked();
     }
 
-    private <T extends Displayable> TreeItem<TreeItemData<?>> createCategory(String name, GenericDao<T> dao) throws SQLException {
+    private <T extends Displayable> TreeItem<TreeItemData<?>> createCategory(String name, GenericDao<T> dao)
+            throws SQLException {
         TreeItem<TreeItemData<?>> categoryItem = new TreeItem<>(new TreeItemData<>(name, dao));
 
         List<T> items = dao.getAll();
         for (T data : items) {
-            TreeItem<TreeItemData<?>> childItem = new TreeItem<>(new TreeItemData<Displayable>(data.getDisplayName(), data));
+            TreeItem<TreeItemData<?>> childItem = new TreeItem<>(
+                    new TreeItemData<Displayable>(data.getDisplayName(), data));
             childItem.getValue().setDaoFromParent(dao);
             categoryItem.getChildren().add(childItem);
         }

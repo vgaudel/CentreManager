@@ -1,29 +1,28 @@
 package fr.dawan.CenterManager.ui;
 
-import javafx.scene.image.ImageView;
+import javafx.scene.layout.Pane;
 
 public class ZoomHandler {
-    private ImageView planImage;
+    private Pane planPane;
 
-    public ZoomHandler(ImageView planImage) {
-        this.planImage = planImage;
+    public ZoomHandler(Pane planPane) {
+        this.planPane = planPane;
     }
 
     public void initialize() {
         isZoom();
-        System.out.println("Is Zoom");
     }
 
     private void isZoom() {
-        planImage.setOnScroll(event -> {
+        planPane.setOnScroll(event -> {
             double zoomFactor = 1.05;
             if (event.getDeltaY() < 0) {
                 zoomFactor = 1 / zoomFactor;
             } else if (event.getDeltaY() > 0) {
                 zoomFactor = 1 * zoomFactor;
             }
-            planImage.setScaleX(planImage.getScaleX() * zoomFactor);
-            planImage.setScaleY(planImage.getScaleY() * zoomFactor);
+            planPane.setScaleX(planPane.getScaleX() * zoomFactor);
+            planPane.setScaleY(planPane.getScaleY() * zoomFactor);
         });
     }
 }
