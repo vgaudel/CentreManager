@@ -15,7 +15,10 @@ import javafx.scene.control.Button;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Polygon;
+import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.SVGPath;
+import javafx.scene.shape.Shape;
 import javafx.stage.FileChooser;
 
 public class MapViewController {
@@ -39,7 +42,7 @@ public class MapViewController {
         planPane.setFocusTraversable(true);
         planOverlay.setMouseTransparent(true);
         planPane.setOnMouseClicked(e -> planPane.requestFocus());
-        planPane.setOnScroll(e -> System.out.println("SCROLL DETECT"));
+        // planPane.setOnScroll(e -> System.out.println("SCROLL DETECT"));
         zoomHandler.initialize();
         dragHandler.initialize();
 
@@ -48,7 +51,6 @@ public class MapViewController {
                 loadSvgPlan();
                 planPane.setStyle("-fx-background-color: rgba(255, 0, 0, 0.1);");
                 planPane.setStyle("-fx-background-color: rgba(0,255,0,0.15);");
-
             } catch (Exception e1) {
                 e1.printStackTrace();
             }
@@ -65,8 +67,10 @@ public class MapViewController {
             String data = event.getDragboard().getString();
             double x = event.getX();
             double y = event.getY();
-
             Zone targetZone = null;
+            Bounds zoneBounds = null;
+            double requiredWidth = 0;
+            double requiredHeight = 0;
 
             for (Zone zone : placementManager.getZones()) {
                 if (zone.contains(x, y)) {
@@ -77,6 +81,11 @@ public class MapViewController {
 
             if (targetZone != null) {
                 placementManager.placeInZone(data, targetZone);
+                zoneBounds = targetZone.getNode().getBoundsInLocal();
+                requiredHeight = zoneBounds.getMaxY();
+                requiredWidth = zoneBounds.getCenterX();
+                planPane.setPrefWidth(Math.max(planPane.getPrefWidth(), requiredWidth));
+                planPane.setPrefHeight(Math.max(planPane.getPrefHeight(), requiredHeight));
             }
 
             event.setDropCompleted(targetZone != null);
@@ -86,7 +95,6 @@ public class MapViewController {
 
     private void loadSvgPlan() throws Exception {
         FileChooser chooser = new FileChooser();
-        System.out.println(">>> Bouton cliqué");
         chooser.setTitle("Sélectionner un plan SVG");
         chooser.getExtensionFilters().add(
                 new FileChooser.ExtensionFilter("SVG", "*.svg")
@@ -95,8 +103,6 @@ public class MapViewController {
         File file = chooser.showOpenDialog(addPlanButton.getScene().getWindow());
         if (file == null)
             return;
-
-        System.out.println(">>> Fichier SVG sélectionné : " + file.getAbsolutePath());
 
         // Nettoyage
         planPane.getChildren().clear();
@@ -110,27 +116,17 @@ public class MapViewController {
         planOverlay.getChildren().clear();
 
         // Affichage
-        int i = 0;
         for (Zone zone : zones) {
-            SVGPath path = zone.getShape();
-
-            // Couleur de remplissage aléatoire (ou à partir du SVG si tu veux)
-            path.setFill(new Color(Math.random(), Math.random(), Math.random(), 0.5));
-
-            // Bordure
-            path.setStroke(Color.BLACK);
-            path.setStrokeWidth(1);
-            System.out.println(i);
-            i++;
-            // Ajouter au planPane
-            planPane.getChildren().add(path);
+            Shape node = zone.getNode();
+            if (node != null) {
+                planPane.getChildren().add(node);
+            }
         }
 
         planOverlay.toFront();
 
         Platform.runLater(() -> {
             Bounds bounds = planPane.getBoundsInLocal();
-            System.out.println(">>> Bounds SVG : " + bounds);
 
             double paneWidth = planPane.getParent().getLayoutBounds().getWidth();
             double paneHeight = planPane.getParent().getLayoutBounds().getHeight();

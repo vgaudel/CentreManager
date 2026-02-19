@@ -81,7 +81,7 @@ public class MapPlacementManager {
 
     private void layoutZone(Zone zone) {
         List<Node> nodes = zoneNodes.get(zone);
-        Bounds bounds = zone.getShape().getBoundsInParent();
+        Bounds bounds = zone.getNode().getBoundsInParent();
 
         double xStart = bounds.getMinX() + PADDING;
         double yStart = bounds.getMinY() + PADDING;

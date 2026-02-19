@@ -2,21 +2,52 @@ package fr.dawan.CenterManager.model;
 
 import java.util.List;
 import javafx.geometry.Point2D;
+import javafx.scene.shape.Polygon;
+import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.SVGPath;
+import javafx.scene.shape.Shape;
 
 public class Zone {
 
     private final String id;
     private final SVGPath shape;
-    private boolean placeable;
+    private final Polygon polygon;
+    private final Rectangle rectangle;
+    private final String IDPREFIX = "zone-";
     private List<Point2D> contour;
     private double area;
+    private String groupId;
+    private boolean placeable;
 
     // Constructeur principal utilisé dans PlanAnalyzer
-    public Zone(int index, SVGPath shape, List<Point2D> contour, double area, boolean placeable) {
-        this.id = "zone-" + index;       // transforme l'index en String
-        this.shape = shape;
+    public Zone(int index, Polygon polygon, List<Point2D> contour, double area, boolean placeable) {
+        this.id = IDPREFIX + index;
+        this.shape = null;
+        this.polygon = polygon;
+        this.rectangle = null;
         this.contour = contour;
+        this.area = area;
+        this.placeable = placeable;
+    }
+
+    public Zone(int index, Rectangle rectangle, List<Point2D> contour, double area,
+            boolean placeable) {
+        this.id = IDPREFIX + index;
+        this.shape = null;
+        this.polygon = null;
+        this.rectangle = rectangle;
+        this.contour = contour;
+        this.area = area;
+        this.placeable = placeable;
+    }
+
+    public Zone(int index, SVGPath shape, List<Point2D> contourPoints, double area,
+            boolean placeable) {
+        this.id = IDPREFIX + index;
+        this.shape = shape;
+        this.polygon = null;
+        this.rectangle = null;
+        this.contour = contourPoints;
         this.area = area;
         this.placeable = placeable;
     }
@@ -26,7 +57,9 @@ public class Zone {
         return id;
     }
 
-    public SVGPath getShape() {
+    public Shape getNode() {
+        if (polygon != null) return polygon;
+        if (rectangle != null) return rectangle;
         return shape;
     }
 
@@ -52,6 +85,14 @@ public class Zone {
 
     public void setArea(double area) {
         this.area = area;
+    }
+
+    public String getGroupId() {
+        return groupId;
+    }
+
+    public void setGroupId(String groupId) {
+        this.groupId = groupId;
     }
 
     // Vérifie si un point est dans la zone (utilise directement le SVGPath)
