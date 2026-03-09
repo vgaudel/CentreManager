@@ -1,16 +1,15 @@
 package fr.dawan.CenterManager.ui;
 
-import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
 import javafx.scene.shape.SVGPath;
 
-public class DragHandler {
+public class DragSVGHandler {
     private final Pane planPane;
 
     private double lastMouseX;
     private double lastMouseY;
 
-    public DragHandler(Pane planPane) {
+    public DragSVGHandler(Pane planPane) {
         this.planPane = planPane;
     }
 

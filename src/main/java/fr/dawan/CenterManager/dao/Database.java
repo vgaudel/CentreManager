@@ -8,9 +8,9 @@ import java.sql.SQLException;
 public class Database {
 
     private static Connection conn;
-    private static final String DB_DIR = "data";
+    private static final String APP_DIR = System.getenv("APPDATA") + "/CenterManager";
     private static final String DB_NAME = "center.db";
-    private static final String URL = "jdbc:sqlite:" + DB_DIR + "/" + DB_NAME;
+    private static final String URL = "jdbc:sqlite:" + APP_DIR + "/" + DB_NAME;
 
     /**
      * Retourne la connexion SQLite. Crée le dossier 'data' si nécessaire.
@@ -18,7 +18,7 @@ public class Database {
     public static Connection getConnection() throws SQLException {
         try {
             // créer le dossier si inexistant
-            File dbDir = new File(DB_DIR);
+            File dbDir = new File(APP_DIR);
             if (!dbDir.exists()) {
                 dbDir.mkdirs();
             }

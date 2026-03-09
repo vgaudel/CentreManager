@@ -1,6 +1,8 @@
 package fr.dawan.CenterManager.model;
 
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
@@ -10,6 +12,7 @@ public class Training implements Displayable {
     private int id;
     private String name;
     private String description;
+    private List<Fog> requiredFogs = new ArrayList<>();
     private final Map<String, Consumer<Object>> fieldSetters = Map.of(
         DisplayFields.TRAINING_TITLE, v -> setName(v.toString()),
         DisplayFields.DESCIRPTION, v -> setDescription(v.toString())
@@ -37,6 +40,10 @@ public class Training implements Displayable {
         this.description = description;
     }
 
+    public void setRequiredFogs(List<Fog> requiredFogs) {
+        this.requiredFogs = requiredFogs;
+    }
+
     public int getId() {
         return id;
     }
@@ -47,6 +54,10 @@ public class Training implements Displayable {
 
     public String getDescription() {
         return description;
+    }
+
+    public List<Fog> getRequiredFogs() {
+        return requiredFogs;
     }
 
     @Override

@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>fr.dawan</groupId>
+  <artifactId>CenterManager</artifactId>
+  <name>CenterManager</name>
+  <version>0.0.1-SNAPSHOT</version>
+  <description>Demo project for Spring Boot</description>
+  <developers>
+    <developer />
+  </developers>
+  <licenses>
+    <license />
+  </licenses>
+  <scm />
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.openjfx</groupId>
+        <artifactId>javafx-maven-plugin</artifactId>
+        <version>0.0.8</version>
+        <configuration>
+          <mainClass>fr.dawan.CenterManager.app.CenterManagerApplication</mainClass>
+        </configuration>
+      </plugin>
+      <plugin>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>3.8.1</version>
+        <configuration>
+          <release>17</release>
+        </configuration>
+      </plugin>
+      <plugin>
+        <artifactId>maven-shade-plugin</artifactId>
+        <version>3.4.1</version>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals>
+              <goal>shade</goal>
+            </goals>
+            <configuration>
+              <finalName>CenterManager-0.0.8-SNAPSHOT-shaded</finalName>
+              <transformers>
+                <transformer>
+                  <mainClass>fr.dawan.CenterManager.app.CenterManagerApplication</mainClass>
+                </transformer>
+              </transformers>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.panteleyev</groupId>
+        <artifactId>jpackage-maven-plugin</artifactId>
+        <version>1.6.0</version>
+        <configuration>
+          <name>CenterManager</name>
+          <appVersion>0.0.8</appVersion>
+          <vendor>Dawan</vendor>
+          <type>EXE</type>
+          <input>${project.build.directory}</input>
+          <mainJar>CenterManager-0.0.8-SNAPSHOT-shaded.jar</mainJar>
+          <mainClass>fr.dawan.CenterManager.app.CenterManagerApplication</mainClass>
+          <destination>${project.build.directory}/installer</destination>
+          <winMenu>true</winMenu>
+          <winShortcut>true</winShortcut>
+          <winDirChooser>true</winDirChooser>
+          <arguments>
+            <argument>--module-path</argument>
+            <argument>${project.basedir}/javafx/javafx-sdk-21.0.2/lib</argument>
+            <argument>--add-modules</argument>
+            <argument>javafx.controls,javafx.fxml,javafx.base,javafx.graphics</argument>
+          </arguments>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+  <properties>
+    <maven.compiler.target>17</maven.compiler.target>
+    <maven.compiler.source>17</maven.compiler.source>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <javafx.version>21</javafx.version>
+  </properties>
+</project>

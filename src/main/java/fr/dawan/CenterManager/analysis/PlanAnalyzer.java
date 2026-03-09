@@ -27,7 +27,6 @@ public class PlanAnalyzer {
             String cls = matcher.group(1);
             String hex = matcher.group(2);
             Color color = Color.web("#" + hex);
-            System.out.println(">>> Couleur " + color + " ajoute");
             classColorMap.put(cls, color);
         }
         return classColorMap;
@@ -62,7 +61,6 @@ public class PlanAnalyzer {
             Pattern polyPattern = Pattern.compile("<polygon[^>]*>");
             Matcher polyMatcher = polyPattern.matcher(groupContent);
             while (polyMatcher.find()) {
-                System.out.println(">>> Polygons trouve");
                 String tag = polyMatcher.group();
                 String pointsStr = extractAttribute(tag, "points");
                 String cls = extractAttribute(tag, "class");
@@ -88,8 +86,6 @@ public class PlanAnalyzer {
                 Zone zone = new Zone(index++, polygon, contourPoints, calculatePolygonArea(contourPoints), true);
                 zone.setGroupId(groupId);
 
-                System.out.println("Zone: " + groupId + " Couleur = " + fill);
-
                 zones.add(zone);
             }
 
@@ -97,7 +93,6 @@ public class PlanAnalyzer {
             Pattern rectPattern = Pattern.compile("<rect[^>]*>");
             Matcher rectMatcher = rectPattern.matcher(groupContent);
             while (rectMatcher.find()) {
-                System.out.println(">>> Rectangles trouve");
                 String tag = rectMatcher.group();
                 String cls = extractAttribute(tag, "class");
                 double x = Double.parseDouble(extractAttribute(tag, "x"));
@@ -121,20 +116,16 @@ public class PlanAnalyzer {
                 Zone zone = new Zone(index++, rectangle, contourPoints, calculatePolygonArea(contourPoints), true);
                 zone.setGroupId(groupId);
 
-                System.out.println(">>> Zone: " + groupId + " Couleur = " + fill);
-
                 zones.add(zone);
             }
         }
 
         // Si on veut filtrer la plus grande zone contour, on peut garder le path principal
         if (contour != null) {
-            System.out.println(">>> Contour trouve");
             List<Point2D> contourPoints = convertSvgPathToPoints(contour);
             Zone contourZone = new Zone(0, contour, contourPoints, calculatePolygonArea(contourPoints), false);
             contourZone.setGroupId("Contour");
             zones.add(contourZone); // Optionnel : tu peux le mettre à part
-            System.out.println(">>> Contour ajoute");
         }
 
         return new PlanAnalysisResult(!zones.isEmpty(), zones);

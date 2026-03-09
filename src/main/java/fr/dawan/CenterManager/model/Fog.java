@@ -10,6 +10,7 @@ public class Fog implements Displayable {
     private int id;
     private String name;
     private String description;
+    private Integer trainingId;
     private final Map<String, Consumer<Object>> fieldSetters = Map.of(
         DisplayFields.TRAINING_TITLE, v -> setName(v.toString()),
         DisplayFields.DESCIRPTION, v -> setDescription(v.toString())
@@ -42,6 +43,10 @@ public class Fog implements Displayable {
         this.description = description;
     }
 
+    public void setTrainingId(Integer trainingId) {
+        this.trainingId = trainingId;
+    }
+
     public int getId() {
         return id;
     }
@@ -52,6 +57,10 @@ public class Fog implements Displayable {
 
     public String getDescription() {
         return description;
+    }
+
+    public Integer getTrainingId() {
+        return trainingId;
     }
 
     @Override

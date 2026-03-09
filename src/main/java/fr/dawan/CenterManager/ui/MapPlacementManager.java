@@ -1,6 +1,8 @@
 package fr.dawan.CenterManager.ui;
 
 import java.util.*;
+
+import fr.dawan.CenterManager.model.Displayable;
 import fr.dawan.CenterManager.model.Zone;
 import javafx.geometry.Bounds;
 import javafx.scene.Node;
@@ -39,12 +41,63 @@ public class MapPlacementManager {
     /**
      * Drop depuis TreeView
      */
+    /**
+     * Place un item (label) dans une zone donnée
+     */
     public void placeInZone(String data, Zone targetZone) {
-        if (targetZone == null || !targetZone.isPlaceable()) return;
+        if (targetZone == null || !targetZone.isPlaceable() || targetZone.getGroupId() == "Millieu") {
+            System.out.println("[DROP] Zone invalide : " + targetZone);
+            return;
+        }
 
-        Node node = createVisualNode(data);
-        addNodeToZone(node, targetZone);
-        enableDrag(node);
+        System.out.println("[DROP] Placement : " + data + " dans " + targetZone.getGroupId());
+
+        // Récupération des bounds de la zone
+        Bounds sceneBounds = targetZone.getNode().localToScene(targetZone.getNode().getBoundsInLocal());
+        Bounds overlayBounds = overlay.sceneToLocal(sceneBounds);
+
+        // Taille de la zone
+        double zoneWidth = overlayBounds.getWidth();
+        double zoneHeight = overlayBounds.getHeight();
+
+        // Labels = 10% de la zone (ou min 40px si trop petit)
+        double labelWidth = Math.max(zoneWidth * 0.1, 40);
+        double labelHeight = Math.max(zoneHeight * 0.1, 30);
+
+        // Position de départ (coin haut-gauche de la zone + padding)
+        double x = overlayBounds.getMinX() + 5;
+        double y = overlayBounds.getMinY() + 5;
+
+        // Compter les labels existants dans cette zone
+        int count = 0;
+        for (Node node : overlay.getChildren()) {
+            if (node instanceof Label lbl && targetZone.getGroupId().equals(lbl.getUserData())) {
+                count++;
+            }
+        }
+
+        // Empiler en dessous
+        y += count * (labelHeight + 5);
+
+        // Création du label
+        Label label = new Label(data);
+        label.setPrefSize(labelWidth, labelHeight);
+        label.setStyle("""
+            -fx-background-color: #e0e0e0;
+            -fx-border-color: #333;
+            -fx-padding: 5;
+            -fx-font-size: 12px;
+            -fx-alignment: CENTER;
+            -fx-text-alignment: CENTER;
+            -fx-wrap-text: true;
+        """);
+
+        label.setLayoutX(x);
+        label.setLayoutY(y);
+        label.setUserData(targetZone.getGroupId());
+
+        overlay.getChildren().add(label);
+        System.out.println("[DROP] Label ajouté à " + x + ", " + y);
     }
 
     /**

@@ -47,31 +47,93 @@
             <artifactId>mysql-connector-j</artifactId>
             <version>8.0.33</version>
         </dependency>
+		<dependency>
+			<groupId>org.apache.pdfbox</groupId>
+			<artifactId>pdfbox</artifactId>
+			<version>2.0.28</version>
+		</dependency>
+		<dependency>
+			<groupId>org.openjfx</groupId>
+			<artifactId>javafx-swing</artifactId>
+			<version>21</version>
+		</dependency>
 	</dependencies>
 
 	<build>
 		<plugins>
-			<!-- Maven compiler plugin -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.8.1</version>
-                <configuration>
-                    <release>17</release>
-                </configuration>
-            </plugin>
-
-            <!-- JavaFX Maven plugin -->
-            <plugin>
+			<plugin>
 				<groupId>org.openjfx</groupId>
 				<artifactId>javafx-maven-plugin</artifactId>
 				<version>0.0.8</version>
 				<configuration>
 					<mainClass>fr.dawan.CenterManager.app.CenterManagerApplication</mainClass>
-					<module>fr.dawan.CenterManager</module>
+				</configuration>
+			</plugin>
+
+			<!-- Compiler -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.8.1</version>
+				<configuration><release>17</release></configuration>
+			</plugin>
+
+			<!-- Copier les dépendances dans target/libs -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<version>3.6.0</version>
+				<executions>
+					<execution>
+						<id>copy-deps</id>
+						<phase>package</phase>
+						<goals><goal>copy-dependencies</goal></goals>
+						<configuration>
+							<outputDirectory>${project.build.directory}/libs</outputDirectory>
+							<excludeScope>provided</excludeScope>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
+			<!-- JAR principal avec manifest classpath -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<version>3.3.0</version>
+				<configuration>
+					<archive>
+						<manifest>
+							<mainClass>fr.dawan.CenterManager.app.CenterManagerApplication</mainClass>
+							<addClasspath>true</addClasspath>
+							<classpathPrefix>libs/</classpathPrefix>
+						</manifest>
+					</archive>
+					<finalName>CenterManager</finalName>
+				</configuration>
+			</plugin>
+
+			<!-- jpackage avec runtime embarqué -->
+			<plugin>
+				<groupId>org.panteleyev</groupId>
+				<artifactId>jpackage-maven-plugin</artifactId>
+				<version>1.6.0</version>
+				<configuration>
+					<name>CenterManager</name>
+					<appVersion>1.0.0</appVersion>
+					<vendor>Dawan</vendor>
+					<type>EXE</type>
+					<input>${project.build.directory}</input>
+					<mainJar>CenterManager.jar</mainJar>
+					<mainClass>fr.dawan.CenterManager.app.CenterManagerApplication</mainClass>
+					<destination>${project.build.directory}/installer</destination>
+					<!-- Runtime custom Java + JavaFX généré par jlink -->
+					<runtimeImage>${project.basedir}/runtime</runtimeImage>
+					<winMenu>true</winMenu>
+					<winShortcut>true</winShortcut>
+					<winDirChooser>true</winDirChooser>
 				</configuration>
 			</plugin>
 		</plugins>
 	</build>
-
 </project>

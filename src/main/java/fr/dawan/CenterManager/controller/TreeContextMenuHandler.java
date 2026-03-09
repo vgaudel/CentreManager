@@ -7,11 +7,14 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 import fr.dawan.CenterManager.dao.GenericDao;
 import fr.dawan.CenterManager.model.Displayable;
 import fr.dawan.CenterManager.model.TreeItemData;
+import fr.dawan.CenterManager.ui.TreeDragAndDropSupport;
 import fr.dawan.CenterManager.model.EditableField;
 import fr.dawan.CenterManager.model.RemoteDay;
 import fr.dawan.CenterManager.util.DisplayFields;
@@ -41,6 +44,7 @@ import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 
 public class TreeContextMenuHandler<T extends Displayable> {
+    private static final Logger logger = Logger.getLogger(TreeContextMenuHandler.class.getName());
 
     private final TreeView<TreeItemData<T>> menuTree;
 
@@ -51,9 +55,15 @@ public class TreeContextMenuHandler<T extends Displayable> {
     public void init() {
         menuTree.setCellFactory(tv -> new TreeCell<>() {
             @Override
-            protected void updateItem(TreeItemData<T> item, boolean emplty) {
-                super.updateItem(item, emplty);
-                setText(emplty || item == null ? null : item.getLabel());
+            protected void updateItem(TreeItemData<T> item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty || item == null) {
+                    setText(null);
+                } else if (item instanceof Displayable d) {
+                    setText(d.getDisplayName()); // affiche juste le nom
+                } else {
+                    setText(item.getLabel()); // fallback pour les catégories
+                }
             }
         });
     }
@@ -96,29 +106,25 @@ public class TreeContextMenuHandler<T extends Displayable> {
             cell.setOnDragDetected(event -> {
                 System.out.println("[DEBUG] Drag détecté!");
                 if (cell.isEmpty()) {
-                    System.out.println("[DEBUG] Cell est vide, abandon");
+                    logger.log(Level.WARNING, "Cell est vide, abandon");
                     return;
                 }
 
                 TreeItemData<T> data = cell.getItem();
                 if (data == null || data.isCategory()) {
-                    System.out.println("[DEBUG] Data est null ou est une catégorie, abandon");
+                    logger.log(Level.WARNING, "Data est null ou est une catégorie, abandon");
                     return;
                 }
 
                 T entity = data.getData();
                 if (!(entity instanceof Displayable)) {
-                    System.out.println("[DEBUG] Entity n'est pas Displayable, abandon");
+                    logger.log(Level.WARNING, "Entity n'est pas Displayable, abandon");
                     return;
                 }
                 Displayable displayable = (Displayable) entity;
-                String dragData = displayable.getClass().getSimpleName() + ":" + displayable.getDisplayName();
-                System.out.println("[DEBUG] Démarrage du drag avec: " + dragData +
-                        " (Position: " + event.getX() + ", " + event.getY() + ")");
-
                 Dragboard db = cell.startDragAndDrop(TransferMode.COPY);
                 ClipboardContent content = new ClipboardContent();
-                content.putString(dragData);
+                content.putString(displayable.getDisplayName());
                 db.setContent(content);
 
                 // Image visuelle qui suit la souris pendant le drag
@@ -133,8 +139,6 @@ public class TreeContextMenuHandler<T extends Displayable> {
                 params.setFill(Color.TRANSPARENT);
                 Image dragView = dragLabel.snapshot(params, null);
                 db.setDragView(dragView, dragView.getWidth() / 2, dragView.getHeight() / 2);
-
-                System.out.println("[DEBUG] Dragboard créé avec succès, contenu: " + db.getString());
 
                 event.consume();
             });
@@ -247,7 +251,8 @@ public class TreeContextMenuHandler<T extends Displayable> {
                 TreeItem<TreeItemData<T>> newItem = new TreeItem<>(new TreeItemData<>(entity.getDisplayName(), entity));
                 newItem.getValue().setDaoFromParent(parentData.getDao());
                 treeItem.getChildren().add(newItem);
-                menuTree.refresh();
+                // menuTree.refresh();
+                treeItem.setExpanded(true);
             });
             menuItems.add(add);
         } else {
@@ -417,19 +422,19 @@ public class TreeContextMenuHandler<T extends Displayable> {
     );
 
     private final Map<FieldType, Function<Node, Object>> extractorFactory = Map.of(
-            FieldType.TEXT, node -> ((TextField) node).getText(),
+        FieldType.TEXT, node -> ((TextField) node).getText(),
 
-            FieldType.TEXTAREA, node -> ((TextArea) node).getText(),
+        FieldType.TEXTAREA, node -> ((TextArea) node).getText(),
 
-            FieldType.CHECKBOX_LIST, node -> {
-                List<String> result = new ArrayList<>();
-                VBox box = (VBox) node;
-                for (Node c : box.getChildren()) {
-                    CheckBox cb = (CheckBox) c;
-                    if (cb.isSelected())
-                        result.add(cb.getText());
-                }
-                return result;
-            });
-
+        FieldType.CHECKBOX_LIST, node -> {
+            List<String> result = new ArrayList<>();
+            VBox box = (VBox) node;
+            for (Node c : box.getChildren()) {
+                CheckBox cb = (CheckBox) c;
+                if (cb.isSelected())
+                    result.add(cb.getText());
+            }
+            return result;
+        }
+    );
 }

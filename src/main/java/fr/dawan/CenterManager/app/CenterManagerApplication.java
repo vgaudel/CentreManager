@@ -33,7 +33,7 @@ public class CenterManagerApplication extends Application{
     }
 
     public static void main(String[] args) {
-        launch();
+        Application.launch(CenterManagerApplication.class, args);
     }
 
 }

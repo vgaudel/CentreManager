@@ -22,16 +22,6 @@ public class TrainingDao implements GenericDao<Training> {
         }
     }
 
-    // public void insert(Training t) throws SQLException {
-    //     String sql = "INSERT INTO training(name, lastname) VALUES(?, ?)";
-    //     try (Connection conn = Database.getConnection();
-    //          PreparedStatement pstmt = conn.prepareStatement(sql)) {
-    //         pstmt.setString(1, t.getName());
-    //         pstmt.setString(2, t.getDescription());
-    //         pstmt.executeUpdate();
-    //     }
-    // }
-
     @Override
     public List<Training> getAll() throws SQLException {
         List<Training> list = new ArrayList<>();
@@ -90,7 +80,6 @@ public class TrainingDao implements GenericDao<Training> {
 
     @Override
     public Training createFromName(String name) throws SQLException {
-        Training training = new Training(name);
-        return insert(training);
+        return new Training(name);
     }
 }

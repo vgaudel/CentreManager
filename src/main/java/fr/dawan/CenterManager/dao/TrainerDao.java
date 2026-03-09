@@ -79,7 +79,6 @@ public class TrainerDao implements GenericDao<Trainer>{
 
     @Override
     public Trainer createFromName(String name) throws SQLException {
-        Trainer f = new Trainer(name);
-        return insert(f);
+        return new Trainer(name);
     }
 }

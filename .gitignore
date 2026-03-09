@@ -35,3 +35,9 @@ build/
 ### DATABASE ###
 data/
 *.db
+
+runtime/
+jdk17*
+javafx/
+.mvn*
+.github*

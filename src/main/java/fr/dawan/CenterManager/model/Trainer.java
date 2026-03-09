@@ -33,7 +33,6 @@ public class Trainer implements Displayable {
         });
     }
 
-
     public Trainer(String name) {
         this.firstName = name;
     }

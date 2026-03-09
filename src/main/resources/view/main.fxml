@@ -15,6 +15,8 @@
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.BorderPane?>
+
 
 <?import javafx.collections.FXCollections?> <!-- collections, pas forcément utile dans FXML -->
 
@@ -27,8 +29,13 @@
 <?import javafx.scene.paint.Color?>
 <?import javafx.scene.text.Font?>
 
-<VBox xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
-      prefWidth="900.0" prefHeight="600.0" fx:controller="fr.dawan.CenterManager.controller.MainController">
+<VBox
+    fx:id="root"
+    xmlns="http://javafx.com/javafx/21"
+    xmlns:fx="http://javafx.com/fxml/1"
+    prefWidth="900.0"
+    prefHeight="600.0"
+    fx:controller="fr.dawan.CenterManager.controller.MainController">
 
     <!-- MenuBar en haut -->
     <children>
@@ -38,7 +45,7 @@
                     <items>
                         <MenuItem text="New"/>
                         <MenuItem text="Open…"/>
-                        <MenuItem text="Export..."/>
+                        <MenuItem text="Export..." onAction="#handleExport"/>
                         <SeparatorMenuItem/>
                         <MenuItem text="Save"/>
                         <MenuItem text="Quit"/>
@@ -58,22 +65,21 @@
             </menus>
         </MenuBar>
 
-        <!-- SplitPane principal -->
-        <SplitPane dividerPositions="0.25" VBox.vgrow="ALWAYS">
-            <items>
-                <!-- Colonne gauche : ListView des éléments -->
-                <AnchorPane fx:id="treePane" />
+        <BorderPane VBox.vgrow="ALWAYS" >
 
-                <!-- Colonne droite : plan scrollable -->
-                <ScrollPane>
-                    <content>
-                        <AnchorPane fx:id="planContent" />
-                    </content>
-                </ScrollPane>
+            <center>
+                <AnchorPane fx:id="planContent"/>
+            </center>
 
-                <AnchorPane fx:id="detailPane" />
-            </items>
-        </SplitPane>
+            <left>
+                <AnchorPane fx:id="treePane"/>
+            </left>
+
+            <right>
+                <AnchorPane fx:id="detailPane"/>
+            </right>
+
+        </BorderPane>
 
         <!-- Barre de status en bas -->
         <HBox spacing="5.0" alignment="CENTER_LEFT" VBox.vgrow="NEVER">
