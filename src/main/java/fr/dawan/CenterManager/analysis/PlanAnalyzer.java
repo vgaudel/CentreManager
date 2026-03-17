@@ -21,7 +21,11 @@ public class PlanAnalyzer {
     // Parse les styles pour récupérer les couleurs des classes
     private Map<String, Color> parseCssStyles(String svgContent) {
         Map<String, Color> classColorMap = new HashMap<>();
-        Pattern stylePattern = Pattern.compile("\\.(cls-\\d+)\\s*\\{[^}]*fill:\\s*#([0-9a-fA-F]{6})");
+
+        Pattern stylePattern = Pattern.compile(
+            "\\.(cls-\\d+)\\s*\\{[^}]*fill:\\s*#([0-9a-fA-F]{6})"
+        );
+
         Matcher matcher = stylePattern.matcher(svgContent);
         while (matcher.find()) {
             String cls = matcher.group(1);
