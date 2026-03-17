@@ -30,30 +30,29 @@ public class MainController {
     @FXML
     private AnchorPane planContent;
 
-    private TreeController treeController;
-    private MapViewController mapViewController;
     private MenuActionHandler menuActionHandler;
-    private StatusBarController statusBarController;
-    private DetailPaneController detailPaneController;
-
 
     @FXML
     public void initialize() throws SQLException, IOException {
-        // charger le TreeController
-        treeController = loadFXML("/view/tree.fxml", treePane);
-        mapViewController = loadFXML("/view/map.fxml", planContent);
-        detailPaneController = loadFXML("/view/detail-pane.fxml", detailPane);
-        statusBarController = loadFXML("/view/status-bar.fxml", statusPane);
+
+        TreeController treeController = loadFXML("/view/tree.fxml", treePane);
+        MapViewController mapViewController = loadFXML("/view/map.fxml", planContent);
+        DetailPaneController detailPaneController = loadFXML("/view/detail-pane.fxml", detailPane);
+        StatusBarController statusBarController = loadFXML("/view/status-bar.fxml", statusPane);
+
 
         menuActionHandler = new MenuActionHandler();
+
         menuActionHandler.registerAction("export", new ExportAction(mapViewController));
+        // statusBarController.setOperationStatus("Bienvenue dans CenterManager");
 
         detailPane.prefWidthProperty().bind(root.widthProperty().multiply(0.08));
+        detailPane.setMinWidth(250);
         treePane.setMinWidth(220);
-        listenTree();
-        // Exemple d’état initial
+        // statusBarController.setConnectionStatus(true);
         // updateStatus("Application initialisée", true);
         // updateDbStatus(false);
+        listenTree(treeController, detailPaneController);
     }
 
     @FXML
@@ -74,16 +73,16 @@ public class MainController {
         }
     }
 
-    private void listenTree() {
-        treeController.setOnItemSelected(item -> {
+    private void listenTree(TreeController tree, DetailPaneController detail) {
+        tree.setOnItemSelected(item -> {
             if (item == null) {
-                detailPaneController.hide();
                 return;
             } else if (item.isCategory()) {
+                detail.hide();
                 return;
             }
 
-            detailPaneController.showDetailsFrom(item.getData());
+            detail.showDetailsFrom(item.getData());
         });
     }
 }

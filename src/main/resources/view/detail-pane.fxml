@@ -13,7 +13,8 @@
             xmlns:fx="http://javafx.com/fxml"
             fx:controller="fr.dawan.CenterManager.controller.DetailPaneController"
             fx:id="root"
-            prefWidth="50.0"
+            prefWidth="250.0"
+            prefHeight="600.0"
             style="-fx-background-color: #f4f4f4; -fx-border-color: #ccc; -fx-border-width: 0 0 0 1;">
 
     <VBox spacing="10" layoutX="5" layoutY="10">

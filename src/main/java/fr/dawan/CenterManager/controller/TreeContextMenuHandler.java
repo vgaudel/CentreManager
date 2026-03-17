@@ -133,7 +133,7 @@ public class TreeContextMenuHandler<T extends Displayable> {
                         "-fx-background-color: rgba(255,255,255,0.9); " +
                                 "-fx-border-color: black; " +
                                 "-fx-padding: 3 6 3 6; " +
-                                "-fx-font-size: 11px;");
+                                "-fx-font-size: 20px;");
 
                 SnapshotParameters params = new SnapshotParameters();
                 params.setFill(Color.TRANSPARENT);
@@ -387,38 +387,34 @@ public class TreeContextMenuHandler<T extends Displayable> {
     }
 
     private final Map<FieldType, Function<EditableField, Node>> fieldFactory = Map.of(
-            FieldType.TEXT, field -> new TextField(
-                    field.value() == null ? "" : field.value().toString()),
+        FieldType.TEXT, field -> new TextField(
+                field.value() == null ? "" : field.value().toString()),
 
-            FieldType.TEXTAREA, field -> {
-                String value = field.value() == null ? "" : field.value().toString();
-                TextArea ta = new TextArea(value);
-                ta.setPrefRowCount(4);
-                return ta;
-            },
+        FieldType.TEXTAREA, field -> {
+            String value = field.value() == null ? "" : field.value().toString();
+            TextArea ta = new TextArea(value);
+            ta.setPrefRowCount(4);
+            return ta;
+        },
 
-            FieldType.CHECKBOX_LIST, field -> {
-                @SuppressWarnings("unchecked")
-                List<RemoteDay> selected = field.value() == null ? List.of() : (List<RemoteDay>) field.value();
+        FieldType.CHECKBOX_LIST, field -> {
+            @SuppressWarnings("unchecked")
+            List<RemoteDay> selected = field.value() == null ? List.of() : (List<RemoteDay>) field.value();
+            Set<String> selectedDays = selected.stream()
+                    .map(RemoteDay::getDay)
+                    .collect(Collectors.toSet());
+            VBox box = new VBox(4);
 
-                Set<String> selectedDays = selected.stream()
-                        .map(RemoteDay::getDay)
-                        .collect(Collectors.toSet());
+            for (String day : DisplayFields.REMOTE_DAYS) {
+                CheckBox cb = new CheckBox(day);
 
-                VBox box = new VBox(4);
-
-                for (String day : DisplayFields.REMOTE_DAYS) {
-                    CheckBox cb = new CheckBox(day);
-
-                    if (selectedDays.contains(day)) {
-                        cb.setSelected(true);
-                    }
-
-                    box.getChildren().add(cb);
+                if (selectedDays.contains(day)) {
+                    cb.setSelected(true);
                 }
-                return box;
+                box.getChildren().add(cb);
             }
-
+            return box;
+        }
     );
 
     private final Map<FieldType, Function<Node, Object>> extractorFactory = Map.of(
@@ -429,6 +425,7 @@ public class TreeContextMenuHandler<T extends Displayable> {
         FieldType.CHECKBOX_LIST, node -> {
             List<String> result = new ArrayList<>();
             VBox box = (VBox) node;
+
             for (Node c : box.getChildren()) {
                 CheckBox cb = (CheckBox) c;
                 if (cb.isSelected())

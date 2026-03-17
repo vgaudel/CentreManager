@@ -14,7 +14,8 @@
 <AnchorPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
             fx:controller="fr.dawan.CenterManager.controller.TreeController"
-            prefWidth="75.0">
+            prefWidth="75.0"
+            prefHeight="600.0">
     <children>
         <VBox layoutX="5" layoutY="5" spacing="10.0">
             <Label text="Éléments disponibles:"/>
