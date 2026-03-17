@@ -2,7 +2,7 @@ package fr.dawan.CenterManager.ui;
 
 import java.util.*;
 
-import fr.dawan.CenterManager.model.Displayable;
+import fr.dawan.CenterManager.dao.PlacementHistoryLogger;
 import fr.dawan.CenterManager.model.Zone;
 import javafx.geometry.Bounds;
 import javafx.scene.Node;
@@ -13,6 +13,8 @@ public class MapPlacementManager {
 
     private final List<Zone> zones;
     private final Pane overlay;
+
+    private final PlacementHistoryLogger historyLogger = new PlacementHistoryLogger();
 
     private final Map<Zone, List<Node>> zoneNodes = new HashMap<>();
     private final Map<Node, Zone> nodeZone = new HashMap<>();
@@ -61,8 +63,8 @@ public class MapPlacementManager {
         double zoneHeight = overlayBounds.getHeight();
 
         // Labels = 10% de la zone (ou min 40px si trop petit)
-        double labelWidth = Math.max(zoneWidth * 0.1, 40);
-        double labelHeight = Math.max(zoneHeight * 0.1, 30);
+        double labelWidth = Math.max(zoneWidth * 0.25, 40);
+        double labelHeight = Math.max(zoneHeight * 0.15, 30);
 
         // Position de départ (coin haut-gauche de la zone + padding)
         double x = overlayBounds.getMinX() + 5;
@@ -85,8 +87,8 @@ public class MapPlacementManager {
         label.setStyle("""
             -fx-background-color: #e0e0e0;
             -fx-border-color: #333;
-            -fx-padding: 5;
-            -fx-font-size: 12px;
+            -fx-padding: 10;
+            -fx-font-size: 20px;
             -fx-alignment: CENTER;
             -fx-text-alignment: CENTER;
             -fx-wrap-text: true;
@@ -97,6 +99,7 @@ public class MapPlacementManager {
         label.setUserData(targetZone.getGroupId());
 
         overlay.getChildren().add(label);
+        historyLogger.logPlacement(data, targetZone.getGroupId());
         System.out.println("[DROP] Label ajouté à " + x + ", " + y);
     }
 
@@ -164,7 +167,7 @@ public class MapPlacementManager {
             -fx-background-color: white;
             -fx-border-color: black;
             -fx-padding: 3 6 3 6;
-            -fx-font-size: 11px;
+            -fx-font-size: 20px;
         """);
 
         return label;
