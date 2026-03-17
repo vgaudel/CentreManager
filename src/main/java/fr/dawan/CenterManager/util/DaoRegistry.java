@@ -6,14 +6,16 @@ import java.util.Map;
 import fr.dawan.CenterManager.dao.GenericDao;
 
 public class DaoRegistry {
-    private static final Map<Class<?>, GenericDao<?>> daoRegistry = new HashMap<>();
+    private static final Map<Class<?>, GenericDao<?>> registry = new HashMap<>();
+
+    private DaoRegistry() {}
 
     public static <T> void registerDao(Class<T> clazz, GenericDao<?> dao) {
-        daoRegistry.put(clazz, dao);
+        registry.put(clazz, dao);
     }
 
     @SuppressWarnings("unchecked")
     public static <T> GenericDao<?> getDao(Class<T> clazz) {
-        return (GenericDao<?>) daoRegistry.get(clazz);
+        return (GenericDao<?>) registry.get(clazz);
     }
 }
