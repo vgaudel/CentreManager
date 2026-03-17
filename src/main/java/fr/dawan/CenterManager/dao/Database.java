@@ -45,6 +45,6 @@ public class Database {
         new FogDao().createTable();
         new TrainerDao().createTable();
         new TrainingDao().createTable();
-        new TrainerTTDao().addRemoteDayColumnIfNotExists();
+        new TrainerRdDao().createTable();
     }
 }

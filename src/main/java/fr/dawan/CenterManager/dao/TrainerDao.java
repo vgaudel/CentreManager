@@ -1,11 +1,12 @@
 package fr.dawan.CenterManager.dao;
 
+import fr.dawan.CenterManager.model.RemoteDay;
 import fr.dawan.CenterManager.model.Trainer;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TrainerDao implements GenericDao<Trainer>{
+public class TrainerDao implements GenericDao<Trainer> {
 
     public void createTable() throws SQLException {
         String sql = """
@@ -29,14 +30,17 @@ public class TrainerDao implements GenericDao<Trainer>{
             Statement stmt = conn.createStatement();
             ResultSet rs = stmt.executeQuery(sql)) {
             while (rs.next()) {
-                Trainer t = new Trainer(
+                list.add(new Trainer(
                     rs.getInt("id"),
                     rs.getString("firstname"),
                     rs.getString("lastname"),
                     new ArrayList<>()
-                );
-                list.add(t);
+                ));
             }
+        }
+        TrainerRdDao rdDao = new TrainerRdDao();
+        for (Trainer t : list) {
+            t.setRemoteDays(rdDao.getRemoteDays(t.getId()));
         }
         return list;
     }
@@ -49,6 +53,15 @@ public class TrainerDao implements GenericDao<Trainer>{
             pstmt.setString(1, entity.getFirstName());
             pstmt.setString(2, entity.getLastName());
             pstmt.executeUpdate();
+
+            ResultSet keys = pstmt.getGeneratedKeys();
+            if (keys.next()) {
+                entity.setId(keys.getInt(1)); // ← récupère le vrai ID
+            }
+        }
+        TrainerRdDao ttDao = new TrainerRdDao();
+        for (RemoteDay rd : entity.getRemoteDays()) {
+            ttDao.addDay(entity.getId(), rd.getDay());
         }
         return entity;
     }
@@ -64,6 +77,11 @@ public class TrainerDao implements GenericDao<Trainer>{
                 pstmt.setInt(3, entity.getId());
                 pstmt.executeUpdate();
         }
+        TrainerRdDao ttDao = new TrainerRdDao();
+        ttDao.removeAllDays(entity.getId());
+        for (RemoteDay rd : entity.getRemoteDays()) {
+            ttDao.addDay(entity.getId(), rd.getDay());
+        }
     }
 
     @Override
@@ -75,6 +93,8 @@ public class TrainerDao implements GenericDao<Trainer>{
             pstmt.setInt(1, entity.getId());
             pstmt.executeUpdate();
         }
+        TrainerRdDao ttDao = new TrainerRdDao();
+        ttDao.removeAllDays(entity.getId());
     }
 
     @Override
