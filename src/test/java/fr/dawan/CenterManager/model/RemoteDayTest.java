@@ -17,7 +17,7 @@ class RemoteDayTest {
 
     @BeforeEach
     void setUp() {
-        remoteDay = new RemoteDay(1, 5, "Lund"); // Ajout d'une erreur ici
+        remoteDay = new RemoteDay(1, 5, "Lundi"); // Ajout d'une erreur ici
     }
 
     @Test

@@ -1,13 +1,9 @@
 name: Pipeline de tests JUnit
-
 on:
   push:
     branches:
       - main
       - TestBranch
-  pull_request:
-    branches:
-      - main
 
 jobs:
   tests:
