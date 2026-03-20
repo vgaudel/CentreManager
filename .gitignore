@@ -40,7 +40,7 @@ runtime/
 jdk17*
 javafx/
 .mvn*
-.github*
+
 
 diagramme/
 
