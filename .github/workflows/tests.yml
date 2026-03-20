@@ -12,9 +12,7 @@ on:
 jobs:
   tests:
     name: Build & Tests JUnit
-    runs-on: maven:4.0.0-rc-5-ibm-semeru-21-noble
-
-
+    runs-on: maven:latest
 
     steps:
       # 1. Récupérer le code source
