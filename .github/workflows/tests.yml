@@ -26,7 +26,7 @@ jobs:
           cache: maven
 
       - name: Lancer les tests
-        run: ./mvnw clean test --batch-mode
+        run: mvn clean test --batch-mode
 
       # 5. Publier les résultats de tests (même si des tests échouent)
       - name: Publier les rapports de tests
