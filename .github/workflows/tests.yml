@@ -12,7 +12,7 @@ on:
 jobs:
   tests:
     name: Build & Tests JUnit
-    runs-on: maven:latest
+    runs-on: maven:3-openjdk-17
 
     steps:
       # 1. Récupérer le code source
