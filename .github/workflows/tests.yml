@@ -1,34 +1,60 @@
-name: Pipeline de tests JUnit
+
+# Liste des evenements qui declenchent ce workflow.
 on:
+  # Declenche le workflow a chaque push sur certaines branches.
   push:
+    # Liste explicite des branches surveillees pour l'evenement push.
     branches:
+      # Branche principale de l'application.
       - main
+      # Branche de travail utilisee pour les tests d'integration CI.
       - TestBranch
 
+# Ensemble des jobs executes par ce workflow.
 jobs:
+  # Identifiant technique du job de tests (utilise en interne par GitHub Actions).
   tests:
-    name: Build & Tests JUnit
+    # Nom lisible affiche dans l'interface GitHub Actions.
+    name: Tests JUnit
+    # Type de machine virtuelle sur laquelle le job va tourner.
     runs-on: ubuntu-latest
 
+    # Sequence des etapes executees dans ce job.
     steps:
+      # Etape 1: recuperer le code source du depot dans la machine CI.
       - name: Checkout du code
+        # Action officielle pour cloner le contenu du repository.
         uses: actions/checkout@v4
 
+      # Etape 2: installer et configurer Java 17 pour Maven.
       - name: Configurer JDK 17
+        # Action officielle pour preparer le JDK dans l'environnement d'execution.
         uses: actions/setup-java@v4
+        # Parametres passes a l'action setup-java.
         with:
+          # Distribution OpenJDK choisie.
           distribution: temurin
+          # Version de Java requise par le projet.
           java-version: '17'
+          # Active le cache des dependances Maven pour accelerer les runs suivants.
           cache: maven
 
+      # Etape 3: nettoyer, compiler et executer les tests unitaires.
       - name: Lancer les tests
+        # Commande Maven executee en mode batch (sortie plus propre pour la CI).
         run: mvn clean test --batch-mode
 
-      # 5. Publier les résultats de tests (même si des tests échouent)
+      # Etape 4: publier les rapports de tests pour pouvoir les telecharger.
       - name: Publier les rapports de tests
+        # Force l'execution de cette etape meme si une etape precedente a echoue.
         if: always()
+        # Action officielle pour joindre des fichiers comme artefacts de run.
         uses: actions/upload-artifact@v4
+        # Parametres de publication de l'artefact.
         with:
+          # Nom de l'artefact qui apparaitra dans l'interface GitHub.
           name: rapports-tests
+          # Dossier contenant les rapports Surefire generes par Maven.
           path: target/surefire-reports/
+          # Duree de retention (en jours) avant suppression automatique.
           retention-days: 10
